@@ -17,5 +17,5 @@ hadoop:
   cityDictionary: hdfs://sandbox.hortonworks.com:8020/tmp/admin/city.us.txt
   tagDictionary: hdfs://sandbox.hortonworks.com:8020/tmp/admin/tags.txt
 elasticSearch:
-  index: logsindext9
+  index: logsindext10
   type: logs
