@@ -4,18 +4,18 @@ spark:
 kafkaConnection:
   group: test
   topics:
-    logtopicf1: 1
+    logsindext3: 1
   zookeeper: sandbox.hortonworks.com:2181
 hbase:
-  tableName: LOG_TABLEF3
+  tableName: LOGS_LINES
   columnFamily: DATA
   zookeeperClientPort: 2181
   zookeeperQuorum: sandbox.hortonworks.com
   zookeeperParent: /hbase-unsecure
 hadoop:
   fileSystem: hdfs://sandbox.hortonworks.com:8020/
-  cityDictionary: hdfs://sandbox.hortonworks.com:8020/tmp/fp/cities.txt
-  tagDictionary: hdfs://sandbox.hortonworks.com:8020/tmp/fp/tags.txt
+  cityDictionary: hdfs://sandbox.hortonworks.com:8020/tmp/admin/city.us.txt
+  tagDictionary: hdfs://sandbox.hortonworks.com:8020/tmp/admin/tags.txt
 elasticSearch:
-  index: logindexf1
-  type: logtypef1
+  index: logsindext9
+  type: logs

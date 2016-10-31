@@ -9,6 +9,7 @@ import com.epam.bigdata2016fp.sparkstreaming.model.LogLine;
 import com.epam.bigdata2016fp.sparkstreaming.utils.DictionaryUtils;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.spark.broadcast.Broadcast;
+import org.apache.spark.mllib.classification.LogisticRegressionModel;
 import org.apache.spark.mllib.linalg.Vectors;
 import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import org.apache.spark.streaming.api.java.JavaDStream;
@@ -38,10 +39,11 @@ public class SparkStreamingApp {
         Map<String, String> dict2 = DictionaryUtils.tagsDictionry(props.getHadoop());
         Broadcast<Map<String, String>> brTagsDict = jsc.sparkContext().broadcast(dict2);
 
-        DecisionTreeModel tree = DecisionTreeModel.load(jsc.sparkContext().sc(), "tmp/fp/ml");
-        double result = tree.predict(Vectors.dense(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+        LogisticRegressionModel model1 = LogisticRegressionModel.load(jsc.sparkContext().sc(), "tmp/fp/ml");
+        //DecisionTreeModel tree = DecisionTreeModel.load(jsc.sparkContext().sc(), "tmp/fp/ml");
+        /*double result = tree.predict(Vectors.dense(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
         System.out.println("####123");
-        System.out.println(result);
+        System.out.println(result);*/
 
 
 
@@ -54,13 +56,25 @@ public class SparkStreamingApp {
         String confStr = index + "/" + type;
         logs.map(keyValue -> {
 
-            double result2 = tree.predict(Vectors.dense(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+            /*double result2 = tree.predict(Vectors.dense(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
             System.out.println("####123");
-            System.out.println(result);
+            System.out.println(result2);*/
 
             ESModel model = ESModel.parseLine(keyValue._2());
             CityInfo cityInfo = brCitiesDict.value().get(Integer.toString(model.getCity()));
             model.setGeoPoint(cityInfo);
+            model.setMlResult(model1.predict(Vectors.dense(model.getOsName().hashCode(),
+                    model.getDevice().hashCode(),
+                    model.getUaFamily().hashCode(),
+                    model.getRegion(),
+                    model.getCity(),
+                    model.getDomain().hashCode(),
+                    model.getAddSlotWidth(),
+                    model.getAddSlotHeight(),
+                    model.getAddSlotVisability(),
+                    model.getAddSlotFormat(),
+                    brTagsDict.value().get(model.getUserTags()).split(",")[0].hashCode())));
+            //double result2 = tree.predict(Vectors.dense(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
             return model;
         }).map(ESModel::toStringifyJson).foreachRDD(jsonRdd -> JavaEsSpark.saveJsonToEs(jsonRdd, confStr));
 
