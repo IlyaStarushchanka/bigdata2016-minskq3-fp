@@ -63,7 +63,7 @@ public class SparkStreamingApp {
             ESModel model = ESModel.parseLine(keyValue._2());
             CityInfo cityInfo = brCitiesDict.value().get(Integer.toString(model.getCity()));
             model.setGeoPoint(cityInfo);
-            Double mlResult= model1.predict(Vectors.dense(model.getOsName().hashCode(),
+            model.setMlResult(model1.predict(Vectors.dense(model.getOsName().hashCode(),
                     model.getDevice().hashCode(),
                     model.getUaFamily().hashCode(),
                     model.getRegion(),
@@ -73,8 +73,7 @@ public class SparkStreamingApp {
                     model.getAddSlotHeight(),
                     model.getAddSlotVisability(),
                     model.getAddSlotFormat(),
-                    brTagsDict.value().get(model.getUserTags()).split(",")[0].hashCode()));
-            model.setMlResult(mlResult.intValue());
+                    brTagsDict.value().get(model.getUserTags()).split(",")[0].hashCode())));
             //double result2 = tree.predict(Vectors.dense(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
             return model;
         }).map(ESModel::toStringifyJson).foreachRDD(jsonRdd -> JavaEsSpark.saveJsonToEs(jsonRdd, confStr));
