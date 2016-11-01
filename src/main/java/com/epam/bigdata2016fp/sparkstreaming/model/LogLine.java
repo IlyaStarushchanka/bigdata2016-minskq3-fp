@@ -88,8 +88,8 @@ public class LogLine implements Serializable {
         put.addColumn(callFamilyBytes, streamIdBytes, Bytes.toBytes(line.streamId));
 
         put.addColumn(callFamilyBytes, tagsListBytes, Bytes.toBytes(line.tagsList));
-        put.addColumn(callFamilyBytes, latBytes, Bytes.toBytes(String.valueOf(line.geoPoint.getLat())));
-        put.addColumn(callFamilyBytes, lonBytes, Bytes.toBytes(String.valueOf(line.geoPoint.getLon())));
+        put.addColumn(callFamilyBytes, latBytes, Bytes.toBytes(String.valueOf((line.geoPoint != null) ? line.geoPoint.getLat() : 0)));
+        put.addColumn(callFamilyBytes, lonBytes, Bytes.toBytes(String.valueOf((line.geoPoint != null) ? line.geoPoint.getLon() : 0)));
 
         /*put.addColumn(callFamilyBytes, latBytes, ByteBuffer.allocate(4).putFloat((line.geoPoint != null) ? line.geoPoint.getLat() : 0).array());
         put.addColumn(callFamilyBytes, lonBytes, ByteBuffer.allocate(4).putFloat((line.geoPoint != null) ? line.geoPoint.getLon() : 0).array());*/
