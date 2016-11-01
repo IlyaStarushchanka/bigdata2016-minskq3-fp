@@ -4,6 +4,7 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.Serializable;
+import java.nio.ByteBuffer;
 
 public class LogLine implements Serializable {
 
@@ -87,8 +88,10 @@ public class LogLine implements Serializable {
         put.addColumn(callFamilyBytes, streamIdBytes, Bytes.toBytes(line.streamId));
 
         put.addColumn(callFamilyBytes, tagsListBytes, Bytes.toBytes(line.tagsList));
-        put.addColumn(callFamilyBytes, latBytes, Bytes.toBytes(line.geoPoint.getLat()));
-        put.addColumn(callFamilyBytes, lonBytes, Bytes.toBytes(line.geoPoint.getLon()));
+        //put.addColumn(callFamilyBytes, latBytes, Bytes.toBytes(line.geoPoint.getLat()));
+        //put.addColumn(callFamilyBytes, lonBytes, Bytes.toBytes(line.geoPoint.getLon()));
+        put.addColumn(callFamilyBytes, latBytes, ByteBuffer.allocate(4).putFloat(line.geoPoint.getLat()).array());
+        put.addColumn(callFamilyBytes, lonBytes, ByteBuffer.allocate(4).putFloat(line.geoPoint.getLon()).array());
         return put;
     }
 
